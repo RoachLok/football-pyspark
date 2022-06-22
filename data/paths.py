@@ -1,0 +1,6 @@
+trmkt_appearences   = 'data/transfermarkt/appearances.csv'
+trmkt_clubs         = 'data/transfermarkt/clubs.csv'
+trmkt_competitions  = 'data/transfermarkt/competitions.csv'
+trmkt_games         = 'data/transfermarkt/games.csv'
+trmkt_leagues       = 'data/transfermarkt/leagues.csv'
+trmkt_players       = 'data/transfermarkt/players.csv'

@@ -1,0 +1,56 @@
+VER QUE LINK DE LOS KAGGLE SE USA POR QUE HAY LIO
+
+
+
+1- Tarjetas obtenidas y media de minutos jugados siendo el jugador un defensa(DC/DR/DL)
+    (appearances.csv)-> [playerID], [yelloCard],[redCard], [time], [position], 
+
+
+
+
+2- Competiciones (o equipos) con mayor cantidad de goles marcados fuera de casa
+    (appearances.csv) (games.csv)->
+
+    OTRA POSIBILIDAD DEL KPI
+    El equipo de cada liga con mas goles fuera de casa - Comparar los equipos de cada liga (tipo quesito) ----------------------------------- BUENOOOOOOOO
+
+    Del teams se saca el ID y nombre del equipo, del games se saca la temporada, el id del awayTeam (el que nosotros queremos) y awayGoals
+
+
+3- Jugadores con mas minutos de juego y menos tarjetas
+    (appearances.csv)-> [yelloCard],[redCard], [time], [playerID]
+
+
+
+4- Top 10 equipos con mayor probabilidad de ganar un partido en casa
+    games.csv -> HomeTeamID season homeProbability 
+    teams.csv -> teamID y teamName
+
+
+
+5- POSIBLE -- Mayores goleadores y sus valores en el mercado en la última temporada
+
+
+
+
+
+
+4- Que jugador se pasa mas tiempo en el campo ---------------- ESTE ESTA MAL 
+(appearances.csv)-> [time], [position]
+
+
+
+
+
+
+
+
+
+
+7- Conocer porcentaje de posiciones vinculadas a los jugadores
+
+
+
+
+
+    
