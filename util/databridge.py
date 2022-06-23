@@ -27,6 +27,9 @@ class Databridge():
         
         return self.dataframes[df_id]
 
+    def get_dataframes(self) -> list[DataFrame, str]:
+        return [(self.dataframes[key], key) for key in self.dataframes]
+
     def remove_dataframe(self, id : str) -> DataFrame:
         if id in self.dataframes:
             return self.dataframes.pop(id)
