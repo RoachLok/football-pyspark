@@ -17,51 +17,67 @@ reader = data.get_reader()
 data.add_dataframes([
     (
         reader.csv(
-            data_routes.trmkt_appearences,
+            data_routes.tech_appearences,
             header=True,
-            schema=schema.trmkt_appearences
+            schema=schema.tech_appearences
         ),
-        'trmkt_appearences'
+        'tech_appearences'
+    ),
+    # (
+    #     reader.csv(
+    #         data_routes.tech_playervalues,
+    #         header=True,
+    #         schema=schema.tech_playervalues
+    #     ),
+    #     'tech_playervalues'
+    # ),
+    (
+        reader.csv(
+            data_routes.tech_games,
+            header=True,
+            schema=schema.tech_games
+        ),
+        'tech_games'
     ),
     (
         reader.csv(
-            data_routes.trmkt_clubs,
+            data_routes.tech_leagues,
             header=True,
-            schema=schema.trmkt_clubs
+            schema=schema.tech_leagues
         ),
-        'trmkt_clubs'
-    ),
-    (
-        reader.csv(
-            data_routes.trmkt_competitions,
-            header=True,
-            schema=schema.trmkt_competitions
-        ),
-        'trmkt_competitions'
+        'tech_leagues'
     ),   
     (
         reader.csv(
-            data_routes.trmkt_games,
+            data_routes.tech_players,
             header=True,
-            schema=schema.trmkt_games
+            schema=schema.tech_players
         ),
-        'trmkt_games'
+        'tech_players'
     ),
     (
         reader.csv(
-            data_routes.trmkt_leagues,
+            data_routes.tech_shots,
             header=True,
-            schema=schema.trmkt_leagues
+            schema=schema.tech_shots
         ),
-        'trmkt_leagues'
+        'tech_shots'
     ),
     (
         reader.csv(
-            data_routes.trmkt_players,
+            data_routes.tech_teams,
             header=True,
-            schema=schema.trmkt_players
+            schema=schema.tech_teams
         ),
-        'trmkt_players'
+        'tech_teams'
+    ),
+    (
+        reader.csv(
+            data_routes.tech_teamstats,
+            header=True,
+            schema=schema.tech_teamstats
+        ),
+        'tech_teamstats'
     ),
 ])
 
@@ -98,3 +114,56 @@ def expenditure():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
+
+
+
+# data.add_dataframes([
+#     (
+#         reader.csv(
+#             data_routes.trmkt_appearences,
+#             header=True,
+#             schema=schema.trmkt_appearences
+#         ),
+#         'trmkt_appearences'
+#     ),
+#     (
+#         reader.csv(
+#             data_routes.trmkt_clubs,
+#             header=True,
+#             schema=schema.trmkt_clubs
+#         ),
+#         'trmkt_clubs'
+#     ),
+#     (
+#         reader.csv(
+#             data_routes.trmkt_competitions,
+#             header=True,
+#             schema=schema.trmkt_competitions
+#         ),
+#         'trmkt_competitions'
+#     ),   
+#     (
+#         reader.csv(
+#             data_routes.trmkt_games,
+#             header=True,
+#             schema=schema.trmkt_games
+#         ),
+#         'trmkt_games'
+#     ),
+#     (
+#         reader.csv(
+#             data_routes.trmkt_leagues,
+#             header=True,
+#             schema=schema.trmkt_leagues
+#         ),
+#         'trmkt_leagues'
+#     ),
+#     (
+#         reader.csv(
+#             data_routes.trmkt_players,
+#             header=True,
+#             schema=schema.trmkt_players
+#         ),
+#         'trmkt_players'
+#     ),
+# ])   

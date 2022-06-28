@@ -1,6 +1,6 @@
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType, FloatType
 
-trmkt_appearences = StructType([ 
+tech_appearences = StructType([ 
     StructField('game_id'                       , IntegerType()),
     StructField('player_id'                     , IntegerType()), 
     StructField('goals'                         , IntegerType()),
@@ -62,19 +62,59 @@ trmkt_games = StructType([
 ])
 
 
-trmkt_leagues = StructType([ 
+tech_leagues = StructType([ 
     StructField('league_id'                     , IntegerType ()),
     StructField('name'                          , StringType  ()),
     StructField('understatNotation'             , StringType  ())
 ])
 
-trmkt_players = StructType([ 
+tech_players = StructType([ 
     StructField('player_id'                     , IntegerType()),
     StructField('name'                          , StringType ())
 ])
 
+tech_shots = StructType([
+    StructField('gameID'                        , IntegerType()),
+    StructField('shooterID'                     , IntegerType()),
+    StructField('assisterID'                    , IntegerType()),
+    StructField('minute'                        , IntegerType()),
+    StructField('situation'                     , StringType ()),
+    StructField('lastAction'                    , StringType ()),
+    StructField('shotType'                      , StringType ()),
+    StructField('shotResult'                    , StringType ()),
+    StructField('xGoal'                         , FloatType  ()),
+    StructField('positionX'                     , FloatType  ()),
+    StructField('positionY'                     , FloatType  ())
+])
+
+tech_teams = StructType([
+    StructField('teamID'                       , IntegerType()), 
+    StructField('name'                         , StringType ())
+])
 
 
+tech_teamstats = StructType([
+    StructField('gameID'                       , IntegerType()),
+    StructField('teamID'                       , IntegerType()), 
+    StructField('season'                       , StringType ()),
+    StructField('date'                         , StringType ()),
+    StructField('location'                     , StringType ()),
+    StructField('goals'                        , IntegerType()),
+    StructField('xGoals'                       , FloatType  ()),
+    StructField('shots'                        , IntegerType()),
+    StructField('shotsOnTarget'                , IntegerType()),
+    StructField('deep'                         , IntegerType()),
+    StructField('ppda'                         , FloatType  ()),
+    StructField('fouls'                        , IntegerType()),
+    StructField('corners'                      , IntegerType()),
+    StructField('yellowCards'                  , IntegerType()),
+    StructField('redCards'                     , IntegerType()),
+    StructField('result'                       , StringType ()),
+
+])
+
+
+#COGER DE LA RAMA MAIN LOS ANTIGUOS Y PEGARLO
 
 
 
@@ -83,34 +123,18 @@ trmkt_players = StructType([
 #ME QUEDO AQUIIIIII
 #ASDASDASDASD
 
-trmkt_clubs = StructType([
-    StructField('club_id'                       , IntegerType()), 
-    StructField('name'                          , StringType ()),
-    StructField('pretty_name'                   , StringType ()),
-    StructField('dcomestic_competition_id'      , StringType ()),
-    StructField('total_market_value'            , StringType ()),
-    StructField('squad_size'                    , IntegerType()),
-    StructField('average_age'                   , StringType ()),
-    StructField('foreigners_number'             , IntegerType()),
-    StructField('foreigners_percentage'         , FloatType  ()),
-    StructField('national_team_players'         , IntegerType()),
-    StructField('stadium_name'                  , StringType ()),
-    StructField('stadium_seats'                 , IntegerType()),
-    StructField('net_transfer_record'           , StringType ()),
-    StructField('coach_name'                    , StringType ()),
-    StructField('url'                           , StringType ()),
-])
 
-trmkt_competitions = StructType([ 
-    StructField('competition_id'                , IntegerType()), 
-    StructField('name'                          , StringType ()),
-    StructField('type'                          , StringType ()),
-    StructField('country_id'                    , IntegerType()),
-    StructField('country_name'                  , StringType ()),
-    StructField('domestic_league_code'          , StringType ()),
-    StructField('confederation'                 , StringType ()),
-    StructField('url'                           , StringType ()) 
-])
+
+# trmkt_competitions = StructType([ 
+#     StructField('competition_id'                , IntegerType()), 
+#     StructField('name'                          , StringType ()),
+#     StructField('type'                          , StringType ()),
+#     StructField('country_id'                    , IntegerType()),
+#     StructField('country_name'                  , StringType ()),
+#     StructField('domestic_league_code'          , StringType ()),
+#     StructField('confederation'                 , StringType ()),
+#     StructField('url'                           , StringType ()) 
+# ])
 
 
 
@@ -118,22 +142,22 @@ trmkt_competitions = StructType([
 
 
 
-trmkt_players = StructType([ 
-    StructField('game_id'                       , IntegerType()),
-    StructField('current_club_id'               , IntegerType()),
-    StructField('name'                          , StringType ()),
-    StructField('pretty_name'                   , StringType ()),
-    StructField('country_of_birth'              , StringType ()),
-    StructField('country_of_citizenship'        , StringType ()),
-    StructField('date_of_birth'                 , StringType ()),
-    StructField('position'                      , StringType ()),
-    StructField('sub_position'                  , StringType ()),
-    StructField('foot'                          , StringType ()),
-    StructField('height_in_cm'                  , IntegerType()),
-    StructField('market_value_in_gbp'           , FloatType  ()),
-    StructField('highest_market_value_in_gbp'   , FloatType  ()),
-    StructField('url'                           , StringType ())
-])
+# trmkt_players = StructType([ 
+#     StructField('game_id'                       , IntegerType()),
+#     StructField('current_club_id'               , IntegerType()),
+#     StructField('name'                          , StringType ()),
+#     StructField('pretty_name'                   , StringType ()),
+#     StructField('country_of_birth'              , StringType ()),
+#     StructField('country_of_citizenship'        , StringType ()),
+#     StructField('date_of_birth'                 , StringType ()),
+#     StructField('position'                      , StringType ()),
+#     StructField('sub_position'                  , StringType ()),
+#     StructField('foot'                          , StringType ()),
+#     StructField('height_in_cm'                  , IntegerType()),
+#     StructField('market_value_in_gbp'           , FloatType  ()),
+#     StructField('highest_market_value_in_gbp'   , FloatType  ()),
+#     StructField('url'                           , StringType ())
+# ])
 
 
 
