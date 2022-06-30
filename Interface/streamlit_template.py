@@ -1,3 +1,4 @@
+from turtle import width
 import pandas as pd
 import streamlit as st
 import altair as alt
@@ -6,36 +7,48 @@ import plotly.express as px
 from io import BytesIO
 import requests 
 import numpy as np
+from streamlit_option_menu import option_menu
 # from bokeh.plotting import figure
+
+
+
+
+
+
+
+
+
 
 st.markdown('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">', unsafe_allow_html=True)
 
-st.markdown("""
-<nav class="navbar fixed-top navbar-expand-sm navbar-dark" style="background-color: #3498DB;">
-  <img src="https://1000marcas.net/wp-content/uploads/2019/12/UEM-Logo.png" alt="uem" width="6%">
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav">
-      <li class="nav-item active">
-        <a class="nav-link disabled" href="#">Home<span class="sr-only">(current)</span></a>
-      </li>
-    </ul>
-  </div>
-</nav>
-""", unsafe_allow_html=True)
+
+# st.markdown("""
+# <nav class="navbar fixed-top  navbar-expand-sm navbar-dark" style="background-color: #3498DB, z-index:300  padding-top: 100px">
+#   <img src="https://1000marcas.net/wp-content/uploads/2019/12/UEM-Logo.png" alt="uem" width="6%">
+#   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+#     <span class="navbar-toggler-icon"></span>
+#   </button>
+#   <div class="collapse navbar-collapse" id="navbarNav">
+#     <ul class="navbar-nav">
+#       <li class="nav-item active">
+#         <a class="nav-link disabled" href="#">Home<span class="sr-only">(current)</span></a>
+#       </li>
+#     </ul>
+#   </div>
+# </nav>
+# """, unsafe_allow_html=True)
+
 
 st.markdown(
         f"""
 <style>
 	.main {{
-  margin-top: 30px; 
+  margin-top: 50px; 
 	}}
 	.reportview-container .main .block-container{{
 		position: fixed;
         max-width: 80%;
-        padding-top: 10px;
+        padding-top: 5px;
         padding-right: 25px;
         padding-left: 25px;
         padding-bottom: 25px;
@@ -211,21 +224,6 @@ def kpi_food_dayWeek():
 	st.pyplot(fig1)
 	
 	
-
-def sumar_lista(lista):
-	suma = 0
-
-	for numero in lista:
-		suma += numero
-	return suma
-	
-#######################################
-
-header_container = st.container()
-stats_container = st.container()	
-#######################################
-base_url = 'http://localhost:5000'
-#######################################
 def request_temp_ranges():
 	temp_url = base_url + '/temp_range?query_by=expenditure' 
 	r = requests.get(temp_url)
@@ -254,175 +252,161 @@ def kpi_gastos_sector():
 	chart_data = pd.DataFrame(importes, sectores)
 	st.bar_chart(chart_data)
 
+def kpi_tajetas_defensas():
 
-	# labels = []
-	# sizes = []
-	# for sector in df1['SECTOR']:
-	# 	#st.write(sector)
-	# 	labels.append(sector)
+	df1 = pd.read_csv('export9.csv')
+	st.write(df1)
 
-	# for importe in df1['sum(IMPORTE)']:
-	# 	#st.write(importe)
-	# 	sizes.append(importe)
+
+def sumar_lista(lista):
+	suma = 0
+
+	for numero in lista:
+		suma += numero
+	return suma
 	
-	# #x = dataframe1
-	# # st.write(x)
-	# explode = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-	# fig1, ax1 = plt.subplots()
-	# ax1.pie(sizes, explode=explode, labels=labels, autopct='%2.1f%%', radius= 3,
-    #     startangle=90)
-	# ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-	# st.pyplot(fig1)
-	
+#######################################
 
-with header_container:
-	st.title("Proyecto Grandes Volumenes de Datos")
-	st.header("Bienvenido")
-	st.subheader("Autores: ")
-	st.write("Daniel Sabbagh, Manuel Salvador, Javier Taborda, Alfonso Vega")
-
-with stats_container:
-	
-	text_input_container = st.empty()
-	t = text_input_container.text_input("Introduce tu Nombre")
-
-	if t != "":
-		text_input_container.empty()
-		st.info("¡¡¡ Bienvenido "+t+" !!!")
-
-	data = pd.read_csv(BytesIO(request_temp_ranges().content))
-	data = pd.read_csv('group_temp.csv')
-	#st.write(data)
-
-	start_station_list = ['All'] + data['SECTOR'].unique().tolist()#Lista de Nombres de KPIs
-	#end_station_list = ['All'] + data['end station name'].unique().tolist()
+# stats_container = st.container()	
+#######################################
+base_url = 'http://localhost:5000'
+#######################################
 
 
-	listKpi = ['GASTO EN SALUD RESPECTO A TEMPERATURA','GASTO EN MODA RESPECTO A TEMPERATURAS NORMALES Y DRÁSTICAS','GASTO EN HOGAR RESPECTO A TEMPERATURAS','DÍA QUE SE GASTA MÁS EN ALIMENTACIÓN','GASTOS TOTALES POR SECTOR','GASTO TOTAL RESPECTO A TEMPERATURA']
+selected = option_menu(
+	menu_title="Proyecto final",
+	options=["Home", "KPIs"],
+	icons=["house", "book"],
+	default_index=0,
+	orientation="horizontal",
+	styles={
+        "container": {"padding": "0!important", "background-color": "#fafafa"},
+        "icon": {"color": "blue", "font-size": "25px"}, 
+        "nav-link": {"font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
+        "nav-link-selected": {"background-color": "grey"},
+    }
+)
+
+if selected == "Home":
+	st.title(f"Bienvenido!")
+	st.subheader("Este es el proyecto final de Grandes Volumenes de Datos")
+	st.write("Ha sido realizado por: **Manuel Salvador y Javier Taborda**")
+	st.write("Este proyecto representa la práctica final de la asignatura de Grandes Volumenes de Datos.", 
+	"En este proyecto se pretende obtener información de valor sobre los jugadores de futbol y su valor en el mercado,", 
+	"A lo largo de esta práctica se desarrollan diferentes KPIs los cuales creemos que aporta información muy relevante al usuario sobre los diferentes jugadores y sus valores", 
+	"Para esta práctica se han usado los siguientes datasets: ")
+	st.write("https://www.kaggle.com/davidcariboo/player-scores")
+
+	# st.header("Bienvenido")
+	# st.subheader("Autores: ")
+if selected == "KPIs":
+	st.title(f"Bienvenido!")
+	# option = st.selectbox(
+    #  'Elija uno de los siguientes KPIs para poder visualizarlos',
+    #  ('1', '2', '3', '4', '5', '6', '7'))
+
+	# st.write('You selected:', option)
+
+	# data = pd.read_csv(BytesIO(request_temp_ranges().content))
+	# data = "Hola"
+	# # pd.read_csv('group_temp.csv')
+	# st.write(data)
+
+	# start_station_list = ['All'] + data['SECTOR'].unique().tolist()#Lista de Nombres de KPIs
+	# end_station_list = ['All'] + data['end station name'].unique().tolist()
+	listKpi = ['Tarjetas y minutos jugados siendo defensa','GASTO EN MODA RESPECTO A TEMPERATURAS NORMALES Y DRÁSTICAS','GASTO EN HOGAR RESPECTO A TEMPERATURAS','DÍA QUE SE GASTA MÁS EN ALIMENTACIÓN','GASTOS TOTALES POR SECTOR','GASTO TOTAL RESPECTO A TEMPERATURA']
 	
 	kpi = st.selectbox('Selecciona una de las 6 predicciones que tenemos:', listKpi, key='start_station')#Creación de desplegable
 
 
-	st.write('Has seleccionado el KPI número: ' + str(kpi) + ' el cual se puede ver representado:')
+	st.write('Has seleccionado el siguiente KPI: ' + str(kpi) + ' el cual se puede ver representado:')
 
 	if str(kpi) == '0':
 		st.write('aaa')
 		#display_data = data[data['SECTOR'] == kpi]
 
-	elif str(kpi) == 'GASTO EN SALUD RESPECTO A TEMPERATURA':
-		kpi_salud_temp()
+	elif str(kpi) == 'Tarjetas y minutos jugados siendo defensa':
+		kpi_tajetas_defensas()
+		# kpi_salud_temp()
 		#display_data = data.copy()
 	elif str(kpi) == 'GASTO EN MODA RESPECTO A TEMPERATURAS NORMALES Y DRÁSTICAS':
-		kpi_costo_moda_temp()
+		kpi_tajetas_defensas()
+		# kpi_costo_moda_temp()
+
 		#display_data = data.copy()
 	elif str(kpi) == 'GASTO EN HOGAR RESPECTO A TEMPERATURAS':
-		kpi_costo_hogar_bajas_altas()
+		kpi_tajetas_defensas()
+		# kpi_costo_hogar_bajas_altas()
 		#display_data = data.copy()
 	elif str(kpi) == 'DÍA QUE SE GASTA MÁS EN ALIMENTACIÓN':
-		kpi_food_dayWeek()
+		kpi_tajetas_defensas()
+		# kpi_food_dayWeek()
 		#display_data = data.copy()
 	elif str(kpi) == 'GASTOS TOTALES POR SECTOR':
-		kpi_gastos_sector()
+		kpi_tajetas_defensas()
+		# kpi_gastos_sector()
 	elif str(kpi) == 'GASTO TOTAL RESPECTO A TEMPERATURA':
-		temperatura_gasto()
+		kpi_tajetas_defensas()
+		# temperatura_gasto()
 		#display_data = data.copy()
 
-	# sel = st.selectbox('SELECCIONAME BBY', start_station_list, key='start_station')#Creación de desplegable
 
 
-	# st.write('Has seleccionado: ' + str(sel))
-
-	# st.write('Y aqui tenemos una representación: ')
-	# if str(sel) != 'All':
-	# 	display_data = data[data['SECTOR'] == sel]
-
-	# else:
-	# 	display_data = data.copy()
-
-	# st.write(display_data, width=700, height=900)
 
 
-	# st.write('Puedes seleccionar varias a la vez')
+ 
 
+
+# with header_container:
+# 	# st.title("Proyecto Grandes Volumenes de Datos")
+# 	# st.header("Bienvenido")
+# 	# st.subheader("Autores: ")
+# 	# st.write("Daniel Sabbagh, Manuel Salvador, Javier Taborda, Alfonso Vega")
+
+# with stats_container:
+	
+# 	# text_input_container = st.empty()
+# 	# t = text_input_container.text_input("Introduce tu Nombre")
+
+# 	# if t != "":
+# 	# 	text_input_container.empty()
+# 	# 	st.info("Bienvenido "+t )
+
+# 	# data = pd.read_csv(BytesIO(request_temp_ranges().content))
+# 	# data = pd.read_csv('group_temp.csv')
+# 	#st.write(data)
+
+# 	# start_station_list = ['All'] + data['SECTOR'].unique().tolist()#Lista de Nombres de KPIs
+# 	#end_station_list = ['All'] + data['end station name'].unique().tolist()
+
+
+# 	listKpi = ['GASTO EN SALUD RESPECTO A TEMPERATURA','GASTO EN MODA RESPECTO A TEMPERATURAS NORMALES Y DRÁSTICAS','GASTO EN HOGAR RESPECTO A TEMPERATURAS','DÍA QUE SE GASTA MÁS EN ALIMENTACIÓN','GASTOS TOTALES POR SECTOR','GASTO TOTAL RESPECTO A TEMPERATURA']
+	
+# 	kpi = st.selectbox('Selecciona una de las 6 predicciones que tenemos:', listKpi, key='start_station')#Creación de desplegable
+
+
+# 	st.write('Has seleccionado el KPI número: ' + str(kpi) + ' el cual se puede ver representado:')
+
+# 	if str(kpi) == '0':
+# 		st.write('aaa')
+# 		#display_data = data[data['SECTOR'] == kpi]
+
+# 	elif str(kpi) == 'GASTO EN SALUD RESPECTO A TEMPERATURA':
+# 		kpi_salud_temp()
+# 		#display_data = data.copy()
+# 	elif str(kpi) == 'GASTO EN MODA RESPECTO A TEMPERATURAS NORMALES Y DRÁSTICAS':
+# 		kpi_costo_moda_temp()
+# 		#display_data = data.copy()
+# 	elif str(kpi) == 'GASTO EN HOGAR RESPECTO A TEMPERATURAS':
+# 		kpi_costo_hogar_bajas_altas()
+# 		#display_data = data.copy()
+# 	elif str(kpi) == 'DÍA QUE SE GASTA MÁS EN ALIMENTACIÓN':
+# 		kpi_food_dayWeek()
+# 		#display_data = data.copy()
+# 	elif str(kpi) == 'GASTOS TOTALES POR SECTOR':
+# 		kpi_gastos_sector()
+# 	elif str(kpi) == 'GASTO TOTAL RESPECTO A TEMPERATURA':
+# 		temperatura_gasto()
+# 		#display_data = data.copy()
 
 	
-	#multi_select = st.multiselect('¿Cuales quieres ver?',start_station_list, key='start_station', default=['Harborside','Marin Light Rail'])
-
-	#slider_input = st.slider('Selecciona la puntuación que nos darías', int(data['tripduration'].min()/3600), int(data['tripduration'].max()/3600), 25)
-
-	
-
-	#user_type = data['T 0-9.99'].value_counts().reset_index()
-	
-
-	# for row in data:
-	# 	if row['T 0-9.99']:
-	# 		pass
-	# 	elif row['T 0-9.99']: 	
-	# 		pass
-
-	#element = pd.concat(data['T 0-9.99'],data['T 10-14.99'],ignore_index=True)
-
-
-	#IMPORTANTE KPI JUSTO DEBAJO
-
-	
-
-	#st.write(r.content) 
-	
-	# costo_invierno = []
-	# costo_verano = []
-	# for temp_range in temp_ranges:
-	# 	if temp_range == 'T 30-3499' or temp_range == 'T 25-2999':
-	# 		dataframeKPI = data[data[temp_range]==True][[col_name for col_name in data if col_name == 'SECTOR' or col_name == 'sum(IMPORTE)']]
-	# 		num = dataframeKPI.loc[dataframeKPI['SECTOR'] == 'HOGAR']
-	# 		costo_verano.append(num['sum(IMPORTE)'].values[0]) 
-			
-			
-	# 	elif temp_range == 'T 10-1499' or temp_range == 'T 0-999':
-	# 		dataframeKPI = data[data[temp_range]==True][[col_name for col_name in data if col_name == 'SECTOR' or col_name == 'sum(IMPORTE)']]
-	# 		num = dataframeKPI.loc[dataframeKPI['SECTOR'] == 'HOGAR']
-	# 		costo_invierno.append(num['sum(IMPORTE)'].values[0])
-	# 	else:
-	# 		continue
-	# st.write(costo_verano)
-	# st.write(costo_invierno)
-
-
-
-
-
-
-	# source = pd.DataFrame({
-	# 	'Temperaturas': temp_ranges,
-	# 	'Importes': 
-	# })
-	#pip install altair vega_datasets
-
-
-		#st.write(use)	
-
-	# don't forget to add titles to your plots
-	#source2.columns['category', 'value']
-
-	# pie_col.subheader('How many of the users were subscribed?')
-
-	# # This is an example of a plotly pie chart
-	# fig = px.pie(source2, values='category', names = 'user type', hover_name='user type')
-
-	# # TODO: change the values of the update_layout function and see the effect
-	# fig.update_layout(showlegend=False,
-	# 	width=400,
-	# 	height=400,
-	# 	margin=dict(l=1,r=1,b=1,t=1),
-	# 	font=dict(color='#383635', size=15))
-
-	# # this function adds labels to the pie chart
-	# # for more information on this chart, visit: https://plotly.com/python/pie-charts/
-	# fig.update_traces(textposition='inside', textinfo='percent+label')
-
-	# # after creating the chart, we display it on the app's screen using this command
-	# pie_col.write(fig)
-
-
-

@@ -43,7 +43,7 @@ tech_appearences = StructType([
 
 
 
-trmkt_games = StructType([
+tech_games = StructType([
     StructField('game_id'                       , IntegerType()),
     StructField('LeagueID'                      , IntegerType()),
     StructField('season'                        , IntegerType()),

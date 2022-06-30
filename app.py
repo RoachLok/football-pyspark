@@ -90,7 +90,7 @@ cache = Cache(app)
 
 @app.route('/')
 def index():
-    return "Hi", 200
+    return "Funciono", 200
 
 
 
