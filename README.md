@@ -13,10 +13,17 @@ Setup python env.
     python3 -m venv .venv
 ```
 
-Enable it the environment for your shell and install dependencies from requirements.txt.
+Enable the environment running the activate script for your shell and environment.
 ```bash
-    # Bash
-    source football-spark-venv/Scripts/activate
+    # Bash (Windows)
+    source .venv/Scripts/activate
+
+    # PowerShell
+    .\.venv\Scripts\Activate.ps1
+``` 
+
+Install dependencies from requirements.txt.
+```bash
     pip install -r requirements.txt
 ```
 
