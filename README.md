@@ -42,3 +42,5 @@ https://www.kaggle.com/datasets/davidcariboo/player-scores
 Football Players Market Value Prediction:
 https://www.kaggle.com/datasets/akarshsinghh/football-players-market-value-prediction
 
+Akarsh Football Players Market Value Prediction:
+https://www.kaggle.com/datasets/akarshsinghh/football-players-market-value-prediction?resource=download
