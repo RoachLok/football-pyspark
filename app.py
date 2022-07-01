@@ -1,7 +1,9 @@
-from flask import Flask, make_response, request
+from flask import Flask, make_response, request, jsonify
 from flask_caching import Cache
+
 from util.databridge import Databridge
-from util.queries import SampleQuery
+from transform.penalty_cards_agg import penalty_cards_agg
+
 import schema.data_structs as schema
 import data.paths as data_routes
 
@@ -26,15 +28,40 @@ dfs_info = [
 data.add_dataframes([(reader.csv(path, header=True, schema=schema), id) for path, schema, id in dfs_info])
 
 
-#data.add_dataframe(data.join_stored('cards', 'weather', on_join_tag='FECHA'), 'cards_weather')
-
 app = Flask(__name__)
 app.config.from_mapping(config)
 cache = Cache(app)
 
+
 @app.route('/')
 def index():
-    return "Hi", 200
+    return make_response('{"response": "PONG!"}', 200, {'Content-type' : 'application/json'})
+
+@app.route('/api/penalty_cards')
+@cache.cached(timeout=300, query_string=True)
+def cards():
+    order_by = request.args.get('order_by') or 'yellow_cards'
+    player_positon = request.args.get('position') or None
+    format_csv = request.args.get('json') == 'false'
+
+    if not player_positon:
+        return '{"response": "Bad Request"}', 400, {'Content-type' : 'application/json'}
+
+
+    response_str = penalty_cards_agg(
+        player_app_df   = data.join_stored('trmkt_appearences', 'trmkt_players', 'player_id'),
+        lasts_keys      = ['position', 'sub_position'],
+        sums_keys       = ['yellow_cards', 'red_cards'],
+        pl_position     = player_positon,
+        order_by        = order_by,
+        csv = format_csv
+    )
+
+
+    response_meta = {'Content-Disposition' : 'attachment; filename=export.csv', 'Content-type' : 'text/csv'}
+
+    return make_response(response_str, 200, response_meta) if format_csv \
+        else response_str, 200, {'Content-type' : 'application/json'}
 
 
 
