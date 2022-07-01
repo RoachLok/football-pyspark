@@ -85,7 +85,7 @@ trmkt_leagues = StructType([
 ])
 
 trmkt_players = StructType([ 
-    StructField('game_id'                       , IntegerType()),
+    StructField('player_id'                       , IntegerType()),
     StructField('current_club_id'               , IntegerType()),
     StructField('name'                          , StringType ()),
     StructField('pretty_name'                   , StringType ()),
