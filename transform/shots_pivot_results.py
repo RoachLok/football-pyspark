@@ -44,12 +44,13 @@ def shots_pivot_results(
 
     Examples
     --------
-    >>> penalty_cards_agg(
-    >>>     player_app_df   = data.join_stored('trmkt_appearences', 'trmkt_players', 'player_id'),
-    >>>     lasts_keys      = ['position', 'sub_position'],
-    >>>     sums_keys       = ['yellow_cards', 'red_cards'],
-    >>>     pl_position     = player_positon,
+    >>> response_str = shots_pivot_results(
+    >>>     shots_df        = data.get_dataframe('tech_shots'),
+    >>>     situation       = situation,
+    >>>     players_df      = names_df,
     >>>     order_by        = order_by,
+    >>>     only_goalers    = only_goalers,
+    >>>     percentage      = percentage,
     >>>     csv = format_csv
     >>> )
     """
