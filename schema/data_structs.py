@@ -100,3 +100,23 @@ trmkt_players = StructType([
     StructField('highest_market_value_in_gbp'   , FloatType  ()),
     StructField('url'                           , StringType ())
 ])
+
+
+tech_players = StructType([ 
+    StructField('player_id'                     , IntegerType()),
+    StructField('name'                          , StringType ())
+])
+
+tech_shots = StructType([
+    StructField('game_id'                       , IntegerType()),
+    StructField('player_id'                     , IntegerType()),
+    StructField('assister_id'                   , IntegerType()),
+    StructField('minute'                        , IntegerType()),
+    StructField('situation'                     , StringType ()),
+    StructField('last_action'                   , StringType ()),
+    StructField('shot_type'                     , StringType ()),
+    StructField('shot_result'                   , StringType ()),
+    StructField('xGoal'                         , FloatType  ()),
+    StructField('positionX'                     , FloatType  ()),
+    StructField('positionY'                     , FloatType  ())
+])
