@@ -4,6 +4,7 @@ from flask_caching import Cache
 from util.databridge import Databridge
 from transform.jobs import penalty_cards_agg, shots_pivot_results
 
+import pandas as pd
 import schema.data_structs as schema
 import data.paths as data_routes
 
@@ -15,6 +16,9 @@ config = {
 
 data = Databridge(data_location='local[8]', name='API')
 reader = data.get_reader()
+
+mrkt_val = pd.read_excel(data_routes.akarsh_mrkt_val, sheet_name='Sheet1').fillna('N/A')
+data.add_dataframe(mrkt_val, 'akarsh_mrkt_val')
 
 dfs_info = [
     (data_routes.trmkt_appearences  , schema.trmkt_appearences  , 'trmkt_appearences'   ),
@@ -105,6 +109,14 @@ def shots():
 
     return make_response(response_str, 200, response_meta) if format_csv \
         else response_str, 200, {'Content-type' : 'application/json'}
+
+
+@app.route('/api/get_player/<player_name>')
+@cache.cached(timeout=300, query_string=True)
+def get_player(player_name):
+    vals = data.get_dataframe('akarsh_mrkt_val')
+
+    return make_response(vals[vals.Player.isin([player_name])].to_csv(), 200, {'Content-Disposition' : 'attachment; filename=export.csv', 'Content-type' : 'text/csv'})
 
 
 if __name__ == '__main__':
