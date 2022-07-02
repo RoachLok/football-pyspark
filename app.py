@@ -50,6 +50,7 @@ def cards():
     player_positon  = request.args.get('position')
     format_csv      = request.args.get('json'    ) 
 
+    format_csv = format_csv == 'false' if format_csv else True
 
     if not player_positon:
         return '{"response": "Bad Request"}', 400, {'Content-type' : 'application/json'}
@@ -61,7 +62,7 @@ def cards():
         sums_keys       = ['yellow_cards', 'red_cards'],
         pl_position     = player_positon,
         order_by        = order_by,
-        csv = format_csv == 'false' if format_csv else True
+        csv = format_csv
     )
 
 
