@@ -56,7 +56,8 @@ def penalty_cards_agg(
             'red_cards',
             'minutes_played',
             'position',
-            'sub_position'
+            'sub_position',
+            'pretty_name'
         ).where(f'position == "{ pl_position }"') \
         .groupBy('player_id') \
         .agg(

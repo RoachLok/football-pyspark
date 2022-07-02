@@ -46,19 +46,24 @@ def index():
 @app.route('/api/penalty_cards')
 @cache.cached(timeout=300, query_string=True)
 def cards():
-    order_by        = request.args.get('order_by') or 'yellow_cards'
-    player_positon  = request.args.get('position')
-    format_csv      = request.args.get('json'    ) 
+    order_by        = request.args.get('order_by'   ) or 'yellow_cards'
+    player_positon  = request.args.get('position'   )
+    pl_names        = request.args.get('pl_names'   )
+    format_csv      = request.args.get('json'       ) 
 
+    pl_names   = pl_names   == 'true'  if pl_names   else False
     format_csv = format_csv == 'false' if format_csv else True
 
     if not player_positon:
         return '{"response": "Bad Request"}', 400, {'Content-type' : 'application/json'}
 
+    last_keys = ['position', 'sub_position']
+    if pl_names:
+        last_keys.append('pretty_name')
 
     response_str = penalty_cards_agg(
         player_app_df   = data.join_stored('trmkt_appearences', 'trmkt_players', 'player_id'),
-        lasts_keys      = ['position', 'sub_position'],
+        lasts_keys      = last_keys,
         sums_keys       = ['yellow_cards', 'red_cards'],
         pl_position     = player_positon,
         order_by        = order_by,
