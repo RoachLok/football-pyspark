@@ -11,11 +11,14 @@ class Databridge():
     def get_spark_instance(self) -> SparkSession:
         return self.spark_session
 
-    def add_dataframe(self, df : DataFrame, id : str):
+    def add_dataframe(self, df : DataFrame, id : str, is_pandas_df = False):
         if id in self.dataframes:
             raise ValueError('id already in use.')
 
-        self.dataframes[id] = df
+        if is_pandas_df:
+            self.dataframes[id] = self.spark_session.createDataFrame(df)
+        else:
+            self.dataframes[id] = df
     
     def add_dataframes(self, dfs : list[(DataFrame, str)]):
         for df, id in dfs:
