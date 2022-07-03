@@ -3,6 +3,7 @@
 Giving football data from Transfermarkt and Kaggle datasets a twist. Using PySpark to produce some interesting data from it.
 
 ## Usage
+### API
 Clone repo.
 ```bash
     git clone https://github.com/RoachLok/football-pyspark
@@ -23,6 +24,23 @@ Enable it the environment for your shell and install dependencies from requireme
 Start the app.
 ```bash
     python app.py
+```
+### INTERFACE
+Setup python env.
+```bash
+    cd Interface
+    python -m venv .envInterface
+```
+
+Enable it the environment for your shell and install dependencies from requirements.txt.
+```bash
+    # Bash
+    source .envInterface/Scripts/activate
+    pip install -r requirements.txt
+```
+Start the app.
+```bash
+    streamlit run streamlit_template.py 
 ```
 
 ## Sources
