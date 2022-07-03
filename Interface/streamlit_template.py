@@ -1,3 +1,6 @@
+from asyncio.windows_events import NULL
+from email.mime import base
+from itertools import groupby
 from turtle import width
 import pandas as pd
 import streamlit as st
@@ -21,24 +24,6 @@ from streamlit_option_menu import option_menu
 
 st.markdown('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">', unsafe_allow_html=True)
 
-
-# st.markdown("""
-# <nav class="navbar fixed-top  navbar-expand-sm navbar-dark" style="background-color: #3498DB, z-index:300  padding-top: 100px">
-#   <img src="https://1000marcas.net/wp-content/uploads/2019/12/UEM-Logo.png" alt="uem" width="6%">
-#   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-#     <span class="navbar-toggler-icon"></span>
-#   </button>
-#   <div class="collapse navbar-collapse" id="navbarNav">
-#     <ul class="navbar-nav">
-#       <li class="nav-item active">
-#         <a class="nav-link disabled" href="#">Home<span class="sr-only">(current)</span></a>
-#       </li>
-#     </ul>
-#   </div>
-# </nav>
-# """, unsafe_allow_html=True)
-
-
 st.markdown(
         f"""
 <style>
@@ -61,209 +46,239 @@ st.markdown(
 """,
         unsafe_allow_html=True,
     )
-sectors = ['SALUD', 'ALIMENTACION', 'AUTO', 'BELLEZA', 'HOGAR', 'MODA Y COMPLEMENTOS', 'OCIO Y TIEMPO LIBRE', 'OTROS', 'RESTAURACIÓN', 'TECNOLOGIA']
-temp_ranges = ['T 30-3499', 'T 25-2999', 'T 20-2499', 'T 15-1999', 'T 10-1499', 'T 0-999']
-def kpi_salud_temp():
-	request_temp_ranges()
-	display_health_data = []
-	importes = []
-
-	#KPI SALUD IMPORTE
-	for temp_range in temp_ranges:
-		dataframeKPI = data[data[temp_range]==True][[col_name for col_name in data if col_name == 'SECTOR' or col_name == 'sum(IMPORTE)']]
-		num = dataframeKPI.loc[dataframeKPI['SECTOR'] == 'SALUD']
-		importes.append(num['sum(IMPORTE)'].values[0])
-		display_health_data.append((temp_range, num['sum(IMPORTE)'].values[0]))
-
-	
-	rangos = ["T 0-9,99", "T 10-14,99", "T 15-19,99", "T 20-24,99", "T 25-29,99", "T 30-34,99"]	
-	source = pd.DataFrame({
-		'Temperaturas en grados': rangos,
-		'Importes': importes
-	})
-	c = alt.Chart(source).mark_bar().encode(
-		x='Temperaturas en grados',
-		y='Importes'
-	).properties(width=600, height=500)
-	st.write('Gasto en salud respecto a la temperatura')
-	col1, col2 = st.columns([5, 2])
-	col1.altair_chart(c)
-	col2.write(source)
-
-def kpi_costo_moda_temp():
-	costo_drastico = []
-	costo_normal = []
-	for temp_range in temp_ranges:
-		if temp_range == 'T 30-3499' or temp_range == 'T 25-2999' or temp_range == 'T 10-1499' or temp_range == 'T 0-999':
-			dataframeKPI = data[data[temp_range]==True][[col_name for col_name in data if col_name == 'SECTOR' or col_name == 'sum(IMPORTE)']]
-			num = dataframeKPI.loc[dataframeKPI['SECTOR'] == 'MODA Y COMPLEMENTOS']
-			costo_drastico.append(num['sum(IMPORTE)'].values[0]) 
-			
-			
-		elif temp_range == 'T 20-2499' or temp_range == 'T 15-1999':
-			dataframeKPI = data[data[temp_range]==True][[col_name for col_name in data if col_name == 'SECTOR' or col_name == 'sum(IMPORTE)']]
-			num = dataframeKPI.loc[dataframeKPI['SECTOR'] == 'MODA Y COMPLEMENTOS']
-			costo_normal.append(num['sum(IMPORTE)'].values[0])
-
-
-	# source = pd.DataFrame({
-	# 	'Temperaturas': temp_ranges,
-	# 	'Importes': 
-	# })
-	importe_drastico = sumar_lista(costo_drastico)
-	importe_normal = sumar_lista(costo_normal)
-	
-	st.write('COSTO NORMAL')
-	st.write(importe_normal)
-	st.write('COSTO DRASTICO')
-	st.write(importe_drastico)
-
-	temps_data = {'Temperatura': ['Normal', 'Drastica'], 'Importe': [importe_normal, importe_drastico]}  
-	source1 = pd.DataFrame(temps_data)
-	#st.write(source1)
-	#pie = alt.Chart(source1).mark_arc().encode(
-    #theta=alt.Theta(field="Importe", type="quantitative"),
-    #color=alt.Color(field="Temperatura", type="nominal")
-	#)
-	#st.altair_chart(pie)	
-	c = alt.Chart(source1).mark_bar().encode(
-		x='Temperatura',
-		y='Importe'
-	)
-	st.write('Comparación gasto en moda temperaturas normales y drásticas')
-	st.altair_chart(c)
-
-
-
-def temperatura_gasto():
-	url = base_url + '/expenditure?query_by=by_day'
+def kpi_goles_fueraCasa():
+	url = base_url + '/api/club_goals_visiting?order_by=away_club_goals&json=false'
 	r = requests.get(url)
-	url2 = base_url + '/temp_range?query_by=by_day'
-	x = requests.get(url2)
-	#bar_col, pie_col = st.columns(2)
+	df1 = pd.read_csv(BytesIO(r.content))
+	df1 = df1.filter(['pretty_name', 'home_club_goals', 'away_club_goals'])
+	st.write(df1)
 
-	data1 = pd.read_csv(BytesIO(r.content))
-	data2 = pd.read_csv(BytesIO(x.content))
-	gasto_diario = []
-	tiempo_diario = []
-
-	for importe in data1['sum(IMPORTE)']:
-		gasto_diario.append(importe)
-	
-	for tiempo in data2['sum(TMed)']:
-		tiempo_diario.append(tiempo)
-
-
-	fig, ax1 = plt.subplots()
-	t = np.arange(1, 365, 1)
-	color = 'tab:red'
-	ax1.set_xlabel('Dia') 
-	ax1.set_ylabel('Importe total', color=color)
-	ax1.plot(t, gasto_diario, color=color)
-	ax1.tick_params(axis='y', labelcolor=color)
-
-	ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
-
-	color = 'tab:blue'
-	ax2.set_ylabel('Temperatura media del dia', color=color)  # we already handled the x-label with ax1
-	ax2.plot(t, tiempo_diario, color=color)
-	ax2.tick_params(axis='y', labelcolor=color)
-
-	fig.tight_layout()  # otherwise the right y-label is slightly clipped
-	st.pyplot(fig)
-
-
-
-def kpi_costo_hogar_bajas_altas():
-#ERROR POR LA TEMPERATURA 
-#NO SABEMOS EXACTAMENTE QUE ES
-	
-	temps_bajas= []
-	temps_altas = []
-	for temp_range in temp_ranges:
-		if temp_range == 'T 10-1499' or temp_range == 'T 0-999':
-			dataframeKPI = data[data[temp_range]==True][[col_name for col_name in data if col_name == 'SECTOR' or col_name == 'sum(IMPORTE)']]			
-			num = dataframeKPI.loc[dataframeKPI['SECTOR'] == 'HOGAR']
-			temps_bajas.append(num['sum(IMPORTE)'].values[0])
-		elif temp_range == 'T 30-3499' or temp_range == 'T 25-2999':
-			dataframeKPI = data[data[temp_range]==True][[col_name for col_name in data if col_name == 'SECTOR' or col_name == 'sum(IMPORTE)']]			
-			num = dataframeKPI.loc[dataframeKPI['SECTOR'] == 'HOGAR']
-			temps_altas.append(num['sum(IMPORTE)'].values[0])
-	
-	labels = ['T. Altas', 'T. Bajas']
-	gastos = [sumar_lista(temps_altas), sumar_lista(temps_bajas)]
-	temps_data = {'Temperatura': labels, 'Gasto': gastos}  
-
-	explode = (0, 0)
+	df = df1.head(50)
+	labels = ['Home goals', 'Away goals']
+	home_goals = df['home_club_goals'].sum()
+	away_goals = df['away_club_goals'].sum()
+	# df = df1.filter(['pretty_name', 'home_club_goals' 'away_club_goals'])
+	# st.write(away_goals)
+	# st.write(home_goals)
+	sizes = [home_goals, away_goals]
+	explode = (0, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
 	fig1, ax1 = plt.subplots()
-	ax1.pie(gastos, explode=explode, labels=labels, autopct='%2.1f%%', radius= 3,
-        startangle=90)
+	ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+			shadow=True, startangle=90)
 	ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-	col1, col2 = st.columns([5, 2])
-	col1.pyplot(fig1)
-	col2.write(pd.DataFrame(temps_data))
 	
-def kpi_food_dayWeek():
-	data_food = request_food()
-	st.write(data_food)
-	dias_semana= ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']
-	costo_semana = []
-	for costo in data_food['sum(IMPORTE)']:
-		costo_semana.append(costo)
-	st.write(costo_semana)
-	st.write('Gasto semanal en alimentacion')
-	st.write(costo_semana)
+	st.write("De los 50 equipos más goleadores fuera de casa, la proporción de goles marcados a goles encajados, siendo visitante")
+	st.pyplot(fig1)	
 
-	y = costo_semana
+	
 
-	explode = (0, 0, 0, 0, 0, 0, 0)
-	fig1, ax1 = plt.subplots()
-	ax1.pie(costo_semana, explode=explode, labels=dias_semana, autopct='%2.1f%%', radius= 3,
-        startangle=90)
-	ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-	st.pyplot(fig1)
-	
-	
-def request_temp_ranges():
-	temp_url = base_url + '/temp_range?query_by=expenditure' 
-	r = requests.get(temp_url)
-	return r
-def request_food():
-	food_url = base_url + '/sector?query_by=food_week'
-	r = requests.get(food_url)
-	dataframe = pd.read_csv(BytesIO(r.content))
-	return dataframe
-
-def kpi_gastos_sector():
-	
-	url = base_url + '/expenditure?query_by=by_sector'
+def kpi_faltas_directas():
+	st.write("Faltas Directas")
+	url = base_url + '/api/shots?situation=DirectFreekick&json=false&only_goalers=true&order_by=Goal&player_names=true&percentage=true'
 	r = requests.get(url)
 	df1 = pd.read_csv(BytesIO(r.content))
 	st.write(df1)
-	#st.write(df1)
-	sectores = []
-	importes = []
-	for x in df1['sum(IMPORTE)']:
-		importes.append(x)
+	
+	df = df1.filter(['name', 'Goal', 'goal_percentage'])
+	# df = df.query('Goal > 5')
+	df = df.query('goal_percentage > 0.01')
+	df = df.sort_values(by=['goal_percentage'], ascending=False)
+	st.write('Ranking de jugadores los cuales tienen la mayor probabilidad de meter un gol de falta')
+	st.write(df)
+	players = df['name'].count()
+	percentage = df['goal_percentage'].sum()
+	# st.write(players)
+	percentage = percentage / players
+	percentage = percentage * 100
+	st.write('Probabilidad de que un jugador marque una falta')
+	st.write(percentage)
 
-	for y in df1['SECTOR']:
-		sectores.append(y)
+	labels = 'No-Goal', 'Goal'
+	noGoal = 100 - percentage
+	sizes = [noGoal, percentage]
+	
+	explode = (0, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
+	fig1, ax1 = plt.subplots()
+	ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+			shadow=True, startangle=90)
+	ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+	
+	st.write("Probabilidad de que un jugador que ya ha marcado un gol de falta, marque otra falta")
+	st.pyplot(fig1)	
 
-	chart_data = pd.DataFrame(importes, sectores)
-	st.bar_chart(chart_data)
+
+
+def kpi_ganar_casa():
+	st.write("Equipos con más partidas ganados en casa")
+	url = base_url + '/api/club_wins_home?order_by=home_won_games&calc_percentage=true&json=false'
+	r = requests.get(url)
+	df1 = pd.read_csv(BytesIO(r.content))
+	
+	st.write(df1)
+	
+	df1 = df1.head(40)
+	won_games = []
+	teams = []
+	for x in df1['home_won_games']:
+		won_games.append(x)
+	
+	for y in df1['pretty_name']:
+		teams.append(y)
+
+	data = pd.DataFrame({
+		'index': teams,
+		'won_games': won_games,
+	}).set_index('index')
+
+	st.write('Mejores equipos ganando en casa, donde en la gráfica se pueden ver los primeros 40')
+	st.bar_chart(data)
+
+def kpi_masMin_menosCards():
+	url = base_url + '/api/penalty_cards?position=Midfield&json=false&order_by=double_yellow&pl_names=true'
+	r = requests.get(url)
+	df1 = pd.read_csv(BytesIO(r.content))
+	# df1 = df1.query('avg_minutes_played > 80')
+	# df1 = df1.query('n_games > 100')
+	df1 = df1.sort_values(by=['yellow_cards'], ascending=False)
+	st.write(df1)
+	df = df1.query('avg_minutes_played < 60')
+	df = df.query('avg_minutes_played > 45')
+	# st.write(df)
+	lessthan60 = df['yellow_cards'].sum()
+	st.write('Tarjetas amarillas para los jugadores con menos de 60 minutos de media y mas de 45 ')
+	st.write(lessthan60)
+
+	df2 = df1.query('avg_minutes_played < 75')
+	df2 = df2.query('avg_minutes_played > 60')
+	# st.write(df2)
+	less80more60 = df2['yellow_cards'].sum()
+	st.write('Tarjetas amarillas para los jugadores con menos de 75 minutos de media y mas de 60 ')
+	st.write(less80more60)
+
+	df3 = df1.query('avg_minutes_played < 90')
+	df3 = df3.query('avg_minutes_played > 75')
+	# st.write(df3)
+
+	less90more80 = df3['yellow_cards'].sum()
+	st.write('Tarjetas amarillas para los jugadores con menos de 90 minutos de media y mas de 80 ')
+	st.write(less90more80)
+	labels = ['Avg < 60', 'Avg < 75', 'Avg < 90']
+	values = [lessthan60, less80more60, less90more80]
+	x = np.arange(len(labels))
+	width = 0.35
+	fig, ax = plt.subplots()
+	rects1 = ax.bar(x - width/2, values, width, label='Yellow cards')
+	ax.set_ylabel('Scores')
+	ax.set_title('Scores by group and gender')
+	ax.set_xticks(x, labels)
+	ax.legend()
+	ax.bar_label(rects1, padding=3)
+
+	fig.tight_layout()
+	st.write('Comparativa entre las tarjetas totales que reciben los jugadores dependiendo de la media de minutos jugados')
+	st.write('Permite visualizar enque franja de tiempo se reciben la mayor cantidad de tarjetas amarillas')
+	st.pyplot(fig)
+	
+def kpi_max_goleadores():
+	url = base_url + '/api/shots?situation=OpenPlay&json=false&only_goalers=true&order_by=Goal&player_names=true&percentage=true'
+	r = requests.get(url)
+	df1 = pd.read_csv(BytesIO(r.content))
+	df1 = df1.filter(['name', 'Goal', 'MissesShots', 'ShotOnPost', 'goal_percentage'])
+	df1 = df1.head(3)
+	st.write(df1)
+	names = []
+	for x in df1['name']:
+		names.append(x)
+	
+	
+
+
+
+	# st.write(names)
+	valores = []
+	url1 = base_url + '/api/get_player/'
+	for z in names:
+		# st.write(z)
+		url_valor = url1 + z
+		r = requests.get(url_valor)
+		value = pd.read_csv(BytesIO(r.content))
+		value = value.filter(['Player','Market value'])
+		st.write(value)
+		valor0 = value['Market value']
+		valores.append(value['Market value'])
+
+
+	jugadores = []
+	goles = []
+	for x in df1['Goal']:
+		goles.append(x)
+	
+	for y in df1['name']:
+	 	jugadores.append(y)
+
+	data1 = pd.DataFrame({
+		'index': jugadores,
+		'goles': goles,
+	}).set_index('index')
+	st.write('Goles marcados por los 3 maximos goleadores, a la vez que viendo su valor en el mercado')
+	st.bar_chart(data1)
+
+
+
+
 
 def kpi_tajetas_defensas():
-
-	df1 = pd.read_csv('export9.csv')
+	url = base_url + '/api/penalty_cards?position=Defender&json=false&order_by=double_yellow&pl_names=true'
+	#õrdery by tambien puede ser por doble amarillas 
+	r = requests.get(url)
+	df1 = pd.read_csv(BytesIO(r.content))
+	df_double = df1
 	st.write(df1)
+	#Quesitos con todas las tarjetas de cada posicion de center back y right y left back
+	labels = 'Centre-Back', 'Left-Back', 'Right-Back'
+	centers = df1.groupby(['sub_position']).count()
+	st.write(centers['yellow_cards'])
+	sizes = centers['yellow_cards']
+	# [15, 15, 45, 25]
+	explode = (0, 0, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
+	fig1, ax1 = plt.subplots()
+	ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+			shadow=True, startangle=90)
+	ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+	
+	st.write("Proporcion de tarjetas amarillas en base a su posicion siendo defensa")
+	st.pyplot(fig1)	
+
+	st.write("Jugadores con mayor cantidad de dobles amarillas")
+	
+	#df_double.groupby('double_yellow').head(20)
+	
+	#head_name = df_double.filter(['pretty_name, double_yellow']).head(20)
+	# for x in df_double['pretty_name'].head(20):
+	df_double = df_double.filter(['pretty_name', 'double_yellow'])
+	st.write(df_double.head(40))
+	dobles = []
+	jugadores = []
+	#df_double.sort_values(by=['double_yellow'], inplace=False)
+	df_double = df_double.head(40)
 
 
-def sumar_lista(lista):
-	suma = 0
 
-	for numero in lista:
-		suma += numero
-	return suma
+	jugadores = []
+	dobles = []
+	for x in df_double['double_yellow']:
+		dobles.append(x)
+	
+	for y in df_double['pretty_name']:
+		jugadores.append(y)
+
+	data = pd.DataFrame({
+		'index': jugadores,
+		'dobles': dobles,
+	}).set_index('index')
+	st.bar_chart(data)
+	
+
 	
 #######################################
 
@@ -290,31 +305,19 @@ selected = option_menu(
 if selected == "Home":
 	st.title(f"Bienvenido!")
 	st.subheader("Este es el proyecto final de Grandes Volumenes de Datos")
-	st.write("Ha sido realizado por: **Manuel Salvador y Javier Taborda**")
+	st.write("Ha sido realizado por: **Manuel Salvador, Javier Taborda, Daniel Sabbagh, Alfonso Vega**")
 	st.write("Este proyecto representa la práctica final de la asignatura de Grandes Volumenes de Datos.", 
 	"En este proyecto se pretende obtener información de valor sobre los jugadores de futbol y su valor en el mercado,", 
 	"A lo largo de esta práctica se desarrollan diferentes KPIs los cuales creemos que aporta información muy relevante al usuario sobre los diferentes jugadores y sus valores", 
 	"Para esta práctica se han usado los siguientes datasets: ")
-	st.write("https://www.kaggle.com/davidcariboo/player-scores")
+	st.write("https://www.kaggle.com/davidcariboo/player-scores")	
+	st.write("https://www.kaggle.com/technika148/football-database")
+	st.write("En el apartado de KPIs va a poder observar un dropbox con todo los KPIs realizados y podrá escoger el que desee clickando sobre el para observar el resultado del mismo")
 
-	# st.header("Bienvenido")
-	# st.subheader("Autores: ")
+
 if selected == "KPIs":
 	st.title(f"Bienvenido!")
-	# option = st.selectbox(
-    #  'Elija uno de los siguientes KPIs para poder visualizarlos',
-    #  ('1', '2', '3', '4', '5', '6', '7'))
-
-	# st.write('You selected:', option)
-
-	# data = pd.read_csv(BytesIO(request_temp_ranges().content))
-	# data = "Hola"
-	# # pd.read_csv('group_temp.csv')
-	# st.write(data)
-
-	# start_station_list = ['All'] + data['SECTOR'].unique().tolist()#Lista de Nombres de KPIs
-	# end_station_list = ['All'] + data['end station name'].unique().tolist()
-	listKpi = ['Tarjetas y minutos jugados siendo defensa','GASTO EN MODA RESPECTO A TEMPERATURAS NORMALES Y DRÁSTICAS','GASTO EN HOGAR RESPECTO A TEMPERATURAS','DÍA QUE SE GASTA MÁS EN ALIMENTACIÓN','GASTOS TOTALES POR SECTOR','GASTO TOTAL RESPECTO A TEMPERATURA']
+	listKpi = ['Tarjetas y minutos jugados siendo defensa','Equipos con mayor cantidad de goles marcados fuera de casa','Mediocentros y la proporcion de tarjetas en base a los minutos jugados','Equipos con mayor probabilidad de ganar en casa','Mayores goleadores por faltas directas','Mayores goleadores en OpenPlay y su valor en el mercado']
 	
 	kpi = st.selectbox('Selecciona una de las 6 predicciones que tenemos:', listKpi, key='start_station')#Creación de desplegable
 
@@ -323,32 +326,19 @@ if selected == "KPIs":
 
 	if str(kpi) == '0':
 		st.write('aaa')
-		#display_data = data[data['SECTOR'] == kpi]
-
 	elif str(kpi) == 'Tarjetas y minutos jugados siendo defensa':
 		kpi_tajetas_defensas()
-		# kpi_salud_temp()
-		#display_data = data.copy()
-	elif str(kpi) == 'GASTO EN MODA RESPECTO A TEMPERATURAS NORMALES Y DRÁSTICAS':
-		kpi_tajetas_defensas()
-		# kpi_costo_moda_temp()
-
-		#display_data = data.copy()
-	elif str(kpi) == 'GASTO EN HOGAR RESPECTO A TEMPERATURAS':
-		kpi_tajetas_defensas()
-		# kpi_costo_hogar_bajas_altas()
-		#display_data = data.copy()
-	elif str(kpi) == 'DÍA QUE SE GASTA MÁS EN ALIMENTACIÓN':
-		kpi_tajetas_defensas()
-		# kpi_food_dayWeek()
-		#display_data = data.copy()
-	elif str(kpi) == 'GASTOS TOTALES POR SECTOR':
-		kpi_tajetas_defensas()
-		# kpi_gastos_sector()
-	elif str(kpi) == 'GASTO TOTAL RESPECTO A TEMPERATURA':
-		kpi_tajetas_defensas()
-		# temperatura_gasto()
-		#display_data = data.copy()
+	elif str(kpi) == 'Equipos con mayor cantidad de goles marcados fuera de casa':
+		kpi_goles_fueraCasa()	
+	elif str(kpi) == 'Mediocentros y la proporcion de tarjetas en base a los minutos jugados':
+		kpi_masMin_menosCards()
+	elif str(kpi) == 'Equipos con mayor probabilidad de ganar en casa':
+		kpi_ganar_casa()
+	elif str(kpi) == 'Mayores goleadores por faltas directas':
+		kpi_faltas_directas()
+	elif str(kpi) == 'Mayores goleadores en OpenPlay y su valor en el mercado':
+		kpi_max_goleadores()
+		
 
 
 

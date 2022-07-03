@@ -4,8 +4,9 @@ VER QUE LINK DE LOS KAGGLE SE USA POR QUE HAY LIO
 
 1- Tarjetas obtenidas y media de minutos jugados siendo el jugador un defensa(DC/DR/DL)
     (appearances.csv)-> [playerID], [yelloCard],[redCard], [time], [position], 
+    DATE: 2014 - 2022
 
-
+    HECHO 
 
 
 2- Competiciones (o equipos) con mayor cantidad de goles marcados fuera de casa
@@ -16,21 +17,25 @@ VER QUE LINK DE LOS KAGGLE SE USA POR QUE HAY LIO
 
     Del teams se saca el ID y nombre del equipo, del games se saca la temporada, el id del awayTeam (el que nosotros queremos) y awayGoals
 
+    POR HACER
 
 3- Jugadores con mas minutos de juego y menos tarjetas
     (appearances.csv)-> [yelloCard],[redCard], [time], [playerID]
 
+    HECHO - SACADO DEL PROPIO 1
 
 
 4- Top 10 equipos con mayor probabilidad de ganar un partido en casa
     games.csv -> HomeTeamID season homeProbability 
     teams.csv -> teamID y teamName
-
-
+    
+    POR HACER
 
 5- SE PUEDE MIRAR A HACER LOS MAYORES GOLEADORES POR FALTAS DIRECTAS, SE PUEDE CON EL SHOTS.csv
     mirar el id del tirado, el partido, y el id de la Y mirar su valor en el excel de FINALS, y ver su valor a partir del nombre
     Comparar los 5 mejores tiradores que hay y ver si su valor en mercado en "similar"
+
+    HECHO
 
 
 6- POSIBLE -- Mayores goleadores y sus valores en el mercado en la última temporada
@@ -40,39 +45,13 @@ VER QUE LINK DE LOS KAGGLE SE USA POR QUE HAY LIO
     Luego de players sacar el nombre y buscarlo en el CSV del valores de los jugadores para sacarlo
     Y ver si los mayores goleadores valen mas o menos y si influye mucho
 
+    HECHO - REVISAR
+
+
+
 6-  Porcentaje por posicion? Saber que posiciones juegan los jugadores (a revisar aun)
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-4- Que jugador se pasa mas tiempo en el campo ---------------- ESTE ESTA MAL 
-(appearances.csv)-> [time], [position]
-
-
-
-
-
-
-
-
-
-
 7- Conocer porcentaje de posiciones vinculadas a los jugadores
-
-
-
-
-
-    

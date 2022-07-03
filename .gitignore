@@ -1,3 +1,4 @@
 football-spark-venv
 .venv
+.envInterface
 *__pycache__
