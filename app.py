@@ -2,7 +2,8 @@ from flask import Flask, make_response, request, jsonify
 from flask_caching import Cache
 
 from util.databridge import Databridge
-from transform.jobs import penalty_cards_agg, shots_pivot_results
+from transform.jobs import penalty_cards_agg, shots_pivot_results, \
+    club_goals_when_visiting, club_home_won_matches
 
 import pandas as pd
 import schema.data_structs as schema
@@ -115,6 +116,90 @@ def shots():
 
     return make_response(response_str, 200, response_meta) if format_csv \
         else response_str, 200, {'Content-type' : 'application/json'}
+
+
+@app.route('/api/club_wins_home')
+@cache.cached(timeout=300, query_string=True)
+def club_wins_home():
+    order_by         = request.args.get('order_by'           ) or 'home_won_games'
+    seasons          = request.args.get('seasons'            )
+    calc_percentage  = request.args.get('calc_percentage'    )
+    min_played_games = request.args.get('min_played_games'   )
+    format_csv       = request.args.get('json'               )
+
+    calc_percentage = calc_percentage == 'true' if calc_percentage else False
+    format_csv = format_csv == 'false' if format_csv else True
+
+    requested_seasons = []
+    
+    if seasons:
+        try:
+            requested_seasons = [int(year) for year in seasons.split(',')]
+        except:
+            return '{"response": "Bad Seasons. Separate season year with ,"}' \
+                , 400, {'Content-type' : 'application/json'}
+
+    if min_played_games:
+        try:
+            min_played_games = int(min_played_games)
+        except:
+            return '{"response": "Bad min_played_games, must be a number."}' \
+                , 400, {'Content-type' : 'application/json'}
+
+    response_str = club_home_won_matches(
+        games_clubs_df  = data.join_stored('trmkt_games', 'trmkt_clubs', ['home_club_id', 'club_id']),
+        lasts_keys      = ['pretty_name', 'season'],
+        sums_keys       = ['home_club_goals', 'away_club_goals'],
+        calc_percentage = calc_percentage,
+        seasons         = requested_seasons,
+        order_by        = order_by,
+        csv = format_csv
+    )
+
+
+    response_meta = {'Content-Disposition' : 'attachment; filename=export.csv', 'Content-type' : 'text/csv'}
+
+    return make_response(response_str, 200, response_meta) if format_csv \
+        else response_str, 200, {'Content-type' : 'application/json'}
+
+
+@app.route('/api/club_goals_visiting')
+@cache.cached(timeout=300, query_string=True)
+def club_goals_visiting():
+    order_by        = request.args.get('order_by'       ) or 'scored_goals'
+    seasons         = request.args.get('seasons'        ) or None
+    scoring_ratio   = request.args.get('scoring_ratio'  )
+    format_csv      = request.args.get('json'           ) 
+
+    scoring_ratio = scoring_ratio == 'true' if scoring_ratio else False
+    format_csv = format_csv == 'false' if format_csv else True
+
+    requested_seasons = []
+    
+    if seasons:
+        try:
+            requested_seasons = [int(year) for year in seasons.split(',')]
+        except:
+            return '{"response": "Bad Seasons. Separate season year with ,"}' \
+                , 400, {'Content-type' : 'application/json'}
+
+
+    response_str = club_goals_when_visiting(
+        games_clubs_df  = data.join_stored('trmkt_games', 'trmkt_clubs', ['away_club_id', 'club_id']),
+        lasts_keys      = ['pretty_name', 'season'],
+        sums_keys       = ['home_club_goals', 'away_club_goals'],
+        scoring_ratio   = scoring_ratio,
+        seasons         = requested_seasons,
+        order_by        = order_by,
+        csv = format_csv
+    )
+
+
+    response_meta = {'Content-Disposition' : 'attachment; filename=export.csv', 'Content-type' : 'text/csv'}
+
+    return make_response(response_str, 200, response_meta) if format_csv \
+        else response_str, 200, {'Content-type' : 'application/json'}
+
 
 
 @app.route('/api/get_player/<player_name>')
