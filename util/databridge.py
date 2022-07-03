@@ -42,5 +42,9 @@ class Databridge():
     def union_store(self, stored_id1 : str, stored_id2 :str) -> DataFrame:
         return self.dataframes[stored_id1].union(self.dataframes[stored_id2])
 
-    def join_stored(self, stored_id1 : str, stored_id2 : str, on_join_tag : str) -> DataFrame:
+    def join_stored(self, stored_id1 : str, stored_id2 : str, on_join_tag : str | list[str]) -> DataFrame:
+        if type(on_join_tag) == list:
+            return self.dataframes[stored_id1].join(self.dataframes[stored_id2], 
+                self.dataframes[stored_id1][on_join_tag[0]] == self.dataframes[stored_id2][on_join_tag[1]])
+
         return self.dataframes[stored_id1].join(self.dataframes[stored_id2], on=on_join_tag)
