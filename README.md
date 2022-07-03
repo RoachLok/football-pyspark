@@ -26,21 +26,12 @@ Start the app.
     python app.py
 ```
 ### INTERFACE
-Setup python env.
-```bash
-    cd Interface
-    python -m venv .envInterface
-```
 
-Enable it the environment for your shell and install dependencies from requirements.txt.
-```bash
-    # Bash
-    source .envInterface/Scripts/activate
-    pip install -r requirements.txt
+On a new terminal run the interface with the API running.
 ```
 Start the app.
 ```bash
-    streamlit run streamlit_template.py 
+    streamlit run interface/streamlit_template.py 
 ```
 
 ## Sources
