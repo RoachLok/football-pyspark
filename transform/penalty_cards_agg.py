@@ -1,6 +1,6 @@
 from pyspark.sql import DataFrame
 import util.agg_functions as agf
-from pyspark.sql.functions import avg, count
+from pyspark.sql.functions import avg, count, when, col, sum
 
 
 def penalty_cards_agg(
@@ -64,7 +64,8 @@ def penalty_cards_agg(
             *agf.lasts(lasts_keys),
             *agf.sums(sums_keys),
             avg('minutes_played').alias('avg_minutes_played'),
-            count('player_id').alias('n_games')
+            count('player_id').alias('n_games'),
+            sum(when(col('yellow_cards') == 2, 1).otherwise(0)).alias('double_yellow')
         )
 
 
